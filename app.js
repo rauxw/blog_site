@@ -1,12 +1,19 @@
-requrie("dotenv").config();
+require("dotenv").config();
 
-const express = requrie("express");
+const express = require("express");
+const expressLayout = require("express-ejs-layouts");
+
 const app = express();
 const PORT = 5000 || process.env.PORT;
 
-app.get("", (req, res) => {
-  res.send("Hello World");
-});
+app.use(express.static("public"));
+
+// Templating Engine
+app.use(expressLayout);
+app.set("layout", "./layout/main");
+app.set("view engine", "ejs");
+
+app.use("/", require("./server/routes/main"));
 
 app.listen(PORT, () => {
   console.log(`Server is running on: ${PORT}`);
