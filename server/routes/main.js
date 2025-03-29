@@ -36,10 +36,52 @@ router.get("", async function (req, res) {
   }
 });
 
+router.get("/post/:id", async (req, res) => {
+  try {
+    let slug = req.params.id;
+
+    const data = await Post.findById({ _id: slug });
+    const locals = {
+      title: data.title,
+      description: "Simple Blog created with NodeJs, Express & MongoDb.",
+    };
+
+    res.render("post", { locals, data });
+  } catch (error) {
+    console.log(error);
+  }
+});
+
+router.post("/search", async (req, res) => {
+  try {
+    const locals = {
+      title: "Search",
+      description: "Simple Blog created with NodeJs, Express & MongoDb.",
+    };
+
+    let searchTerm = req.body.searchTerm;
+    const searchNoSpecia1Char = searchTerm.replace(/[^a-zA-Z0-9]/g, "");
+
+    const data = await Post.find({
+      $or: [
+        {
+          title: { $regex: new RegExp(searchNoSpecia1Char, "i") },
+        },
+        {
+          body: { $regex: new RegExp(searchNoSpecia1Char, "i") },
+        },
+      ],
+    });
+    res.render("search", { data, locals });
+  } catch (error) {
+    console.log(error);
+  }
+});
+
 function insertPostData() {
   Post.insertMany([
     {
-      title: "Just a another test",
+      title: "Node js",
       body: "This is just a body",
     },
   ]);
