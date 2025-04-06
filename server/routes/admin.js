@@ -41,26 +41,74 @@ router.post("/admin", async (req, res) => {
 });
 
 router.get("/dashboard", adminMiddleWare, async (req, res) => {
-  res.render("admin/dashboard");
-});
-
-router.post("/admin", async (req, res) => {
   try {
-    const { username, password } = req.body;
-    const hashedPassword = await bcrypt.hash(password, 10);
-    const user = await User.create({
-      username: username,
-      password: hashedPassword,
-    });
-    res.status(201).json({
-      user,
+    const locals = {
+      title: "Dashboard",
+      description: "Blog created with NodeJs, Express & MongoDB",
+    };
+
+    const data = await Post.find();
+    res.render("admin/dashboard", {
+      locals,
+      data,
+      layout: admin_layout,
     });
   } catch (error) {
-    if (error.code === 11000) {
-      res.status(409).json({ message: "User already in use" });
-    }
-    res.status(500).json({ message: "Internal Server Error" });
+    console.log(error);
   }
 });
+
+router.get("/add-post", adminMiddleWare, async (req, res) => {
+  try {
+    const locals = {
+      title: "Add Post",
+      description: "Blog created with NodeJs, Express & MongoDB",
+    };
+
+    const data = await Post.find();
+    res.render("admin/add-post", {
+      locals,
+      layout: admin_layout,
+    });
+  } catch (error) {
+    console.log(error);
+  }
+});
+
+router.post("/add-post", adminMiddleWare, async (req, res) => {
+  try {
+    console.log(req.body);
+    try {
+      const newPost = await Post.create({
+        title: req.body.title,
+        body: req.body.body,
+      });
+      res.redirect("/dashboard");
+    } catch (error) {
+      console.log(error);
+    }
+  } catch (error) {
+    console.log(error);
+  }
+});
+
+// router.post("/admin", async (req, res) => {
+//   try {
+//     const { username, password } = req.body;
+//     const hashedPassword = await bcrypt.hash(password, 10);
+//     const user = await User.create({
+//       username: username,
+//       password: hashedPassword,
+//     });
+//     res.status(201).json({
+//       user,
+//     });
+//   } catch (error) {
+//     if (error.code === 11000) {
+//       res.status(409).json({ message: "User already in use" });
+//     }
+//     res.status(500).json({ message: "Internal Server Error" });
+//   }
+// });
 
 module.exports = router;
