@@ -2,6 +2,8 @@ const express = require("express");
 const router = express.Router();
 const Post = require("../models/Post");
 const User = require("../models/User");
+const bcrypt = require("bcrypt");
+const jwt = require("jsonwebtoken");
 
 const admin_layout = "../views/layout/admin";
 
@@ -19,6 +21,7 @@ router.get("/admin", async (req, res) => {
 
 router.post("/admin", async (req, res) => {
   try {
+    const { username, password } = req.body;
   } catch (error) {
     console.log(error);
   }
