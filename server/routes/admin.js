@@ -127,6 +127,11 @@ router.delete("/delete-post/:id", adminMiddleWare, async (req, res) => {
   }
 });
 
+router.get("/logout", (req, res) => {
+  res.clearCookie("token");
+  res.redirect("/");
+});
+
 // router.post("/admin", async (req, res) => {
 //   try {
 //     const { username, password } = req.body;
